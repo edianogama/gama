@@ -5,8 +5,35 @@ h1,h2,h3,h4,h5,h6 {
 p{font-family: 'Nunito Sans', sans-serif; font-weight: 400;}
 header {
     width: 100%;
-    height: 10vh;
-    background:red;
+    height:15vh;
+    position: relative;
+    z-index: 3;
+}
+header .menu { 
+    position: absolute;
+    padding: 50px 20px;
+    left: 100px;
+    z-index: 3;
+}
+header .menu svg {
+    width: 40px;
+    fill: #fff;
+ }
+header .logo {
+    width: 150px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    background: #1a8dff;
+    z-index: 1;
+}
+header .logo h1{
+    font-size: 1rem;
+    color: #fff;
+    top: 50%;
+    position: absolute;
+    transform: translateY(-50%);
+    padding: 0 15px;
 }
 .bg {
     width: 100%;
@@ -26,7 +53,7 @@ header {
 #slider .featured { 
     position: absolute;
     overflow: hidden;
-    height: 60vh;
+    /* height: calc(100% - 30vh); */
     left: 0;
     top: 0;
     bottom: 0;
@@ -39,7 +66,20 @@ header {
 #slider .featured ul { 
     margin: 0; display: table; width: 100%; height: 100%;
  }
-#slider .featured ul li { height: 100%; display: table-cell;    box-shadow: 0px -1px 11px #000;}
+#slider .featured ul li { 
+    position:absolute;
+    right: 0;
+    height: 100%; 
+    width: 150px;
+    display: table-cell;    
+    box-shadow: 0px -1px 11px #000;
+}
+#slider .featured ul li.active { 
+    width: 100% !important;
+}
+#slider .featured ul li.next { 
+    z-index: 1;
+}
 #slider .featured img {
     height: 100%;
     width: 100%;
@@ -47,24 +87,29 @@ header {
 }
 #slider .slider-footer {
     width: 100%;
-    height: 20vh;
+    height: 15vh;
     position: absolute;
+    overflow: hidden;
     left: 0;
-    top: calc(80vh);
+    bottom: 0;
     z-index: 3;
+    background: linear-gradient(135deg, #002876a3 0%,#0345a4c7 24%,#0181ff 73%,#0181ff 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#002876', endColorstr='#0181ff',GradientType=1 );
 
 }
 #slider .slider-footer .info {
     position: absolute;
     padding: 20px;
     left: 100px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 #slider .slider-footer .info::after{
     content: '';
     position: absolute;
     left: 10px;
     top: 20px;
-    min-height: 90px;
+    min-height: 75px;
     width: 5px;
     background: #1a8dff;
 }
@@ -73,12 +118,13 @@ header {
     color: #fff;
     font-weight: 900;
     letter-spacing: 2px;
-    font-size: 20px;
+    font-size: 1rem;
     text-transform: uppercase;
 }
 #slider .slider-footer .info p{
     color: #fff;
     margin: 0;
+    font-size: .8rem;
 }
 #slider .nav {
     position: absolute;
@@ -95,8 +141,8 @@ header {
     bottom: 0;
     margin: auto;
     fill: #fff;
-    width: 60px;
-    height: 60px;;
+    width: 40px;
+    height: 40px;;
 }
 footer {
     height: 100%;
