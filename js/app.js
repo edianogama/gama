@@ -1,4 +1,5 @@
 $(document).foundation()
+// https://ihatetomatoes.net/greensock-tutorial-create-simple-image-slideshow/
 $(document).ready(function(){
     var $activeSlide = $('#slider .active'),
         $allSlide = $('#slider li'),
