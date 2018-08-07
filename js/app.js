@@ -12,13 +12,21 @@ $(document).ready(function(){
     init();
     function goNext() {
         console.log('gooo');
+
         var slideIn = $('#slider li.next'),
+        slideTransition = $('#slider .transition'),
         slideOut = $('#slider .active'),
         slideNext = $('#slider li.next').next();
         var tl = new TimelineLite();
         // go to the next slide timeline
         tl
-        .fromTo(slideIn, 0.4, { width:'150px'}, { width:'100%',autoAlpha: 1,  ease:Power1.easeInOut})
+        .set(slideIn, {height:'100%'})
+        .fromTo(slideTransition, 0.4, {width:'150px',  transformOrigin:"50% 50%" }, { width:'100%',  transformOrigin:"50% 50%", ease:Power1.easeInOut})
+        .fromTo(slideIn, 0.4, { width:'150px', autoAlpha:0, transformOrigin:"50% 50%" }, {autoAlpha:1, width:'100%', transformOrigin:"50% 50%" ,  ease:Power1.easeInOut})
+        
+        // .to(slideIn, .2, {autoAlpha: 1,ease:Power1.easeInOut})
+        .set(slideTransition, {width:'0' })
+        
         .set(slideIn, { className: '+=active'})
         .set(slideOut, {className: '-=active'})
         .set(slideIn, {className: '-=next'})        
