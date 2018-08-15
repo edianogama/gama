@@ -1,5 +1,8 @@
 $(document).foundation()
 // https://ihatetomatoes.net/greensock-tutorial-create-simple-image-slideshow/
+
+
+
 $(document).ready(function(){
     var $activeSlide = $('#slider .active'),
         $allSlide = $('#slider li'),
@@ -9,7 +12,7 @@ $(document).ready(function(){
         TweenMax.set($nextSlide, {autoAlpha: .7});
 
     }
-    init();
+    // init();
     function goNext() {
         console.log('gooo');
         var slideIn = $('#slider li.next'),
