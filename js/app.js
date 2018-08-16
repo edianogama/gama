@@ -4,6 +4,79 @@ $(document).foundation()
 
 
 $(document).ready(function(){
+    let slider = {
+        contentToScroll : $('#slider .featured'),
+        scrollWidht: $('#slider .featured').width(),
+        windowWidth: $(window).width(),
+        scrollRequest: 0
+    }
+    let requestId = null;
+
+    // https://codepen.io/osublake/pen/QqPqbN/?editors=0010
+    // window.onscroll = scrollContentSlider();
+    function scrollContentSlider($direction) {
+        console.log(slider.windowWidth);
+        console.log(slider.scrollRequest);
+        
+        let quantoAnda = 0;
+        let  faltaQuanto =  0;
+        if($direction == 'right'){
+            quantoAnda = (slider.contentToScroll.position().left + 150) * 0.05;
+            faltaQuanto = Math.abs(slider.scrollWidht) - quantoAnda;
+        }else{
+            quantoAnda =  (slider.contentToScroll.position().left - 350 );
+            faltaQuanto = Math.abs(slider.scrollWidht) + quantoAnda;
+        }
+
+        if(faltaQuanto < slider.windowWidth ){
+            return;
+        }
+        if(faltaQuanto < slider.scrollWidht && $direction == 'right'){
+            return;
+        }
+        console.log(quantoAnda);
+        
+        TweenMax.to(slider.contentToScroll,.5, { x:quantoAnda, ease:Power2.easeInOut });
+        // requestId = slider.scrollRequest > 0 ? requestAnimationFrame(scrollContentSlider) : null;
+    }
+    // TweenLite.set(contentToScroll, {
+    //     y: -window.pageYOffset
+    // });
+
+    var featuredElement = document.getElementById("featured");
+    if (featuredElement.addEventListener)
+    {
+        // IE9, Chrome, Safari, Opera
+        featuredElement.addEventListener("mousewheel", MouseWheelHandler, false);
+        // Firefox
+        featuredElement.addEventListener("DOMMouseScroll", MouseWheelHandler, false);
+    }
+    // IE 6/7/8
+    else
+    {
+        featuredElement.attachEvent("onmousewheel", MouseWheelHandler);
+    }
+
+    function MouseWheelHandler(e)
+    {   
+        slider.scrollRequest++;
+
+        // cross-browser wheel delta
+        var e = window.event || e; // old IE support
+        var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+        if(delta>0){
+            scrollContentSlider('right');
+        }else{
+            scrollContentSlider('left');
+        }
+        return false;
+    }
+
+
+
+
+
+
     var $activeSlide = $('#slider .active'),
         $allSlide = $('#slider li'),
         $nextSlide = $("#slider .next");
@@ -42,5 +115,4 @@ $(document).ready(function(){
         e.preventDefault();
         goNext();
     })
-    
 });

@@ -6,7 +6,8 @@ p{font-family: 'Nunito Sans', sans-serif; font-weight: 400;}
 header {
     width: 100%;
     height:15vh;
-    position: relative;
+    top: 0;
+    position: fixed;
     z-index: 3;
 }
 header .menu { 
@@ -49,30 +50,34 @@ header .logo h1{
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#002876', endColorstr='#0181ff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */   
     z-index: 1;
 }
-
-#slider .featured { 
+#slider {
+    display: block;
     position: absolute;
-    overflow: hidden;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    margin:auto;
     width: 100%;
-    z-index: 2;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
     background: url('https://reviravoltapositiva.files.wordpress.com/2016/04/indio-2.jpg') no-repeat;
     background-size: cover;
     background-position: center;
 }
-#slider .featured ul { 
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: auto; 
+#slider .featured { 
+    display: inline-block;
+    width: auto;
+    height: auto;
     white-space: nowrap;
+    position: absolute;
+    transform: translateY(-50%);
+    top: 50%;
+    z-index: 2;
+}
+#slider .featured ul { 
+    width: auto; 
  }
 #slider .featured ul li { 
-    height: 450px; 
+    /* height: 350px;  */
+    height: 75vh;
     margin: 0 10px;
     width: 24em;
     display: inline-block;
