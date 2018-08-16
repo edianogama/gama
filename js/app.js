@@ -1,6 +1,7 @@
 $(document).foundation()
 // https://ihatetomatoes.net/greensock-tutorial-create-simple-image-slideshow/
-
+// https://greensock.com/forums/topic/17564-scrollmagic-horizontal-scroll-with-anchor-navigation/
+// https://codepen.io/osublake/pen/QqPqbN/?editors=0010
 
 
 $(document).ready(function(){
@@ -12,7 +13,6 @@ $(document).ready(function(){
     }
     let requestId = null;
 
-    // https://codepen.io/osublake/pen/QqPqbN/?editors=0010
     // window.onscroll = scrollContentSlider();
     function scrollContentSlider($direction) {
         console.log(slider.windowWidth);
@@ -36,7 +36,7 @@ $(document).ready(function(){
         }
         console.log(quantoAnda);
         
-        TweenMax.to(slider.contentToScroll,.5, { x:quantoAnda, ease:Power2.easeInOut });
+        TweenMax.to(slider.contentToScroll,.5, { x:quantoAnda, ease:Cubic.easeInOut });
         // requestId = slider.scrollRequest > 0 ? requestAnimationFrame(scrollContentSlider) : null;
     }
     // TweenLite.set(contentToScroll, {
