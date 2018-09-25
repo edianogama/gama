@@ -2,125 +2,148 @@ $(document).foundation()
 // https://ihatetomatoes.net/greensock-tutorial-create-simple-image-slideshow/
 // https://greensock.com/forums/topic/17564-scrollmagic-horizontal-scroll-with-anchor-navigation/
 // https://codepen.io/osublake/pen/QqPqbN/?editors=0010
+{
+    // um elemento chamado slide
 
+    class Slide{
+        constructor(el){
+            this.DOM = {el: el};
+            this.DOM.imgWrap = this.DOM.el.querySelector('.slide__img-wrap');
+            this.DOM.img = this.DOM.el.querySelector('.slide__img');
+            // criando um novo item de slide a partir deste      
+            this.calcSizes();
+            this.calcTransforms();
+        }
+        calcSizes(){
+            console.log(this.DOM.imgWrap);
+            this.width = this.DOM.imgWrap.offsetWidth;
+            this.height = this.DOM.imgWrap.offsetHeight;
+        }
+        calcTransforms(){
+            this.transforms = [
+                {x: -1*(winsize.width/2+this.width), y: -1*(winsize.height/2+this.height), rotation: -30},
+                {x: -1*(winsize.width/2-this.width/3), y: 0, rotation: 0}, //left 1
+                {x: 0, y: 0, rotation: 0}, //centro - 2
+                {x: winsize.width/2-this.width/3, y: 0, rotation: 0},
+                {x: winsize.width/2+this.width, y: winsize.height/2+this.height, rotation: 30},
+                {x: -1*(winsize.width/2 - this.width/2 - winsize.width*0.075), y: 0, rotation: 0}
+            ];
 
-$(document).ready(function(){
-    let slider = {
-        contentToScroll : $('#slider .featured'),
-        scrollWidht: $('#slider .featured').width(),
-        windowWidth: $(window).width(),
-        scrollRequest: 0
-    }
-    let requestId = null;
-
-    // window.onscroll = scrollContentSlider();
-    function scrollContentSlider($direction) {
-        console.log(slider.windowWidth);
-        console.log(slider.scrollRequest);
-        
-        let quantoAnda = 0;
-        let  faltaQuanto =  0;
-        if($direction == 'right'){
-            quantoAnda = (slider.contentToScroll.position().left + 150) * 0.05;
-            faltaQuanto = Math.abs(slider.scrollWidht) - quantoAnda;
-        }else{
-            quantoAnda =  (slider.contentToScroll.position().left - 350 );
-            faltaQuanto = Math.abs(slider.scrollWidht) + quantoAnda;
+        }
+        position(pos){
+            TweenMax.set(this.DOM.imgWrap, {
+                x: this.transforms[pos].x, 
+                y: this.transforms[pos].y, 
+                rotationX: 0,
+                rotationY: 0,
+                opacity: 1,
+                rotationZ: this.transforms[pos].rotation
+            });
+        }
+        setCurrent(){
+            this.isCurrent =true;
+            this.DOM.el.classList.add('slide--current', 'slide--visible');
+            this.position(2);
+        }
+        setLeft(){
+            this.isRight = this.isCurrent = false;
+            this.isLeft = true;
+            this.DOM.el.classList.add('slide--visible');
+            console.log(this);
+            this.position(1);
+        }
+        setRight(){
+            this.isLeft = this.isCurrent = false;
+            this.isRight = true;
+            this.DOM.el.classList.add('slide--visible');
+            // Position it on the right position.
+            this.position(3);
+        }
+        isPositionedLeft(){
+            return this.isLeft;
+        }
+        isPositionedRight(){
+            return this.isRight;
+        }
+        isPositionedCenter(){
+            return this.isCurrent;
         }
 
-        if(faltaQuanto < slider.windowWidth ){
-            return;
+    }
+    // SIGNIFICADO DE Array.from
+    class Slideshow{
+        constructor(el){
+            this.DOM = {el: el};
+            this.slides = [];
+            Array.from(this.DOM.el.querySelectorAll('.slide')).forEach( slideEl => this.slides.push(new Slide(slideEl)));
+            // total de slides criados
+            this.slidesTotal = this.slides.length;
+            
+            //slides inicial
+            this.current = 0;
+
+            //TODO:: criar contents seguindo a lógica do slide
+            this.contents = [];
+
+            this.render();
+            this.initEvents();
         }
-        if(faltaQuanto < slider.scrollWidht && $direction == 'right'){
-            return;
+        render(){
+            // encadeando os elementos
+            this.currentSlide = this.slides[this.current];
+            this.nextSlide = this.slides[this.current+1 <= this.slidesTotal-1 ? this.current+1 : 0 ];
+            this.prevSlide = this.slides[this.current-1 >= 0 ? this.current-1 : this.slidesTotal-1 ];
+            this.currentSlide.setCurrent();
+            this.nextSlide.setRight();
+            this.prevSlide.setLeft();
+          
+            // se 0+1 for menor ou igual ao 3-1 entao aumento 1, se nao coloco 0;
         }
-        console.log(quantoAnda);
-        
-        TweenMax.to(slider.contentToScroll,.5, { x:quantoAnda, ease:Cubic.easeInOut });
-        // requestId = slider.scrollRequest > 0 ? requestAnimationFrame(scrollContentSlider) : null;
-    }
-    // TweenLite.set(contentToScroll, {
-    //     y: -window.pageYOffset
-    // });
+        initEvents(){
+            // criando um evento de clicque padronizado
+            this.clickFn = (slide) => {
+                if(slide.isPositionedLeft()){
 
-    var featuredElement = document.getElementById("featured");
-    if (featuredElement.addEventListener)
-    {
-        // IE9, Chrome, Safari, Opera
-        featuredElement.addEventListener("mousewheel", MouseWheelHandler, false);
-        // Firefox
-        featuredElement.addEventListener("DOMMouseScroll", MouseWheelHandler, false);
-    }
-    // IE 6/7/8
-    else
-    {
-        featuredElement.attachEvent("onmousewheel", MouseWheelHandler);
-    }
+                    console.log(slide, 'está na esquerda');
+                }else
+                if(slide.isPositionedRight()){
+                    this.navigate('next');
+                    console.log(slide, 'está na direita');
+                }else{
+                    console.log(slide, 'está na centro');
+                }
 
-    function MouseWheelHandler(e)
-    {   
-        slider.scrollRequest++;
-
-        // cross-browser wheel delta
-        var e = window.event || e; // old IE support
-        var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-        if(delta>0){
-            scrollContentSlider('right');
-        }else{
-            scrollContentSlider('left');
+            }
+            // atrelando o clique a cada elemento
+            for (let slide of this.slides) {
+                // slide.DOM.imgWrap.addEventListener('click', () => this.clickFn(slide));
+                slide.DOM.imgWrap.addEventListener('click', (function(){
+                    this.clickFn(slide);
+                }).bind(this));
+            }            
         }
-        return false;
+        showContent(){}
+        hideContent(){}
+        navigate(direction){
+            // controle a animação
+            if(this.isAnimating) return;
+            this.isAnimating = true;
+
+            // checar se for next
+            console.log(this.slidesTotal, 'slidesTotal');
+            
+            
+            console.log(direction, 'direction');
+        }
     }
 
+    // window sizes;
+    let winsize;
+    const calcWinsize = () => winsize = {width: window.innerWidth, height: window.innerHeight}
+    calcWinsize();
+    console.log(winsize, 'winsize');
+    
 
-
-
-
-
-    var $activeSlide = $('#slider .active'),
-        $allSlide = $('#slider li'),
-        $nextSlide = $("#slider .next");
-    function init(){
-        TweenMax.set($allSlide.not($activeSlide), {autoAlpha: 0});
-        TweenMax.set($nextSlide, {autoAlpha: .7});
-
-    }
-    // init();
-    function goNext() {
-        console.log('gooo');
-
-        var slideIn = $('#slider li.next'),
-        slideTransition = $('#slider .transition'),
-        slideOut = $('#slider .active'),
-        slideNext = $('#slider li.next').next();
-        var tl = new TimelineLite();
-        // go to the next slide timeline
-        tl
-        .set(slideIn, {height:'100%'})
-        .fromTo(slideTransition, 0.4, {width:'150px',  transformOrigin:"50% 50%" }, { width:'100%',  transformOrigin:"50% 50%", ease:Power1.easeInOut})
-        .fromTo(slideIn, 0.4, { width:'150px', autoAlpha:0, transformOrigin:"50% 50%" }, {autoAlpha:1, width:'100%', transformOrigin:"50% 50%" ,  ease:Power1.easeInOut})
-        
-        // .to(slideIn, .2, {autoAlpha: 1,ease:Power1.easeInOut})
-        .set(slideTransition, {width:'0' })
-        
-        .set(slideIn, { className: '+=active'})
-        .set(slideOut, {className: '-=active'})
-        .set(slideIn, {className: '-=next'})        
-
-        // animate H1 and p of the active slide up and fade them out
-        // .to([slideOutH1,slideOutP], 0.3, {y: '-=15px', autoAlpha: 0, ease:Power3.easeInOut}, 0)
-
-        .fromTo(slideNext, 0.6,{x:'150%', autoAlpha:0}, {x: '-0%', autoAlpha: 1,className: '+=next', ease:Power3.easeInOut}, 0)
-
-        // animate new slide up (from out of the viewport)
-        // .to(slideIn, 0.5, {x: '-=100%', ease:Power3.easeInOut}, 0)
-
-        // animate H1 and P of the new slide up and fade them in
-        // .fromTo([slideInH1,slideInP], 0.3, {y: '+=20px', autoAlpha: 0}, {autoAlpha: 1, y: 0, ease:Power1.easeInOut}, 0.3);
-
-    }
-    $('.goNextSlide').click(function(e){
-        e.preventDefault();
-        goNext();
-    })
-});
+    // Init slideshow.
+    const slideshow = new Slideshow(document.querySelector('.slideshow'));
+}
