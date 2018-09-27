@@ -68,7 +68,15 @@ $(document).foundation()
         isPositionedCenter(){
             return this.isCurrent;
         }
-
+        moveToPosition(settings){
+            // -1 vai mover para esquerda
+            // 0 center
+            console.log(settings);
+            return new Promise(function(resolve, reject){
+               
+                
+            })
+        }
     }
     // SIGNIFICADO DE Array.from
     class Slideshow{
@@ -128,11 +136,13 @@ $(document).foundation()
             // controle a animação
             if(this.isAnimating) return;
             this.isAnimating = true;
-
+            const upcomingPos = direction === 'next' ?
+                this.current < this.slidesTotal-2 ? this.current+2 : Math.abs(this.slidesTotal-2-this.current):
+                this.current >= 2 ? this.current-2 : Math.abs(this.slidesTotal-2+this.current);
+            console.log(upcomingPos, 'upcomingPos');                                 
+            this.currentSlide.moveToPosition({position: direction === 'next' ? -1 : 1, delay: 0.07 });
             // checar se for next
             console.log(this.slidesTotal, 'slidesTotal');
-            
-            
             console.log(direction, 'direction');
         }
     }
