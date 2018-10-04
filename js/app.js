@@ -10,9 +10,11 @@ $(document).foundation()
             this.DOM = {el: el};
             this.DOM.imgWrap = this.DOM.el.querySelector('.slide__img-wrap');
             this.DOM.img = this.DOM.el.querySelector('.slide__img');
+            this.DOM.title = this.DOM.el.querySelector('.slide__caption h1');
             // criando um novo item de slide a partir deste      
             this.calcSizes();
             this.calcTransforms();
+            this.hideTexts();
         }
         calcSizes(){
             console.log(this.DOM.imgWrap);
@@ -68,17 +70,45 @@ $(document).foundation()
         isPositionedCenter(){
             return this.isCurrent;
         }
+        hideTexts(){
+            TweenMax.set(this.DOM.title, {opacity: 0 })
+        }
+        showTexts(){
+            TweenMax.fromTo(this.DOM.title, 0.6, {opacity: 0, y: 20 },{opacity: 1, y:0, ease: Power4.easeOut });
+            // TweenMax.set(this.DOM.title, {opacity: 1});
+        }
+          // Reset classes and state.
+        reset() {
+            this.isRight = this.isLeft = this.isCurrent = false;
+            this.DOM.el.classList = 'slide';
+        }
+        hide() {
+            TweenMax.set(this.DOM.imgWrap, {x:0, y:0, rotationX:0, rotationY:0, rotationZ:0, opacity:0});
+        }
         moveToPosition(settings){
-            // -1 vai mover para esquerda
-            // 0 center
-            console.log(settings);
+            let self  = this;
             return new Promise(function(resolve, reject){
-               
-                
+                TweenMax.to(self.DOM.imgWrap, .8, {
+                    ease: Power4.easeInOut,
+                    delay: settings.delay || 0,
+                    startAt: settings.from !== undefined ? {
+                        x: self.transforms[settings.from+2].x,
+                        y: self.transforms[settings.from+2].y,
+                        rotationX: 0,
+                        rotationY: 0,
+                        rotationZ: self.transforms[settings.from+2].rotation
+                    } : {},
+                    x: self.transforms[settings.position+2].x,
+                    y: self.transforms[settings.position+2].y,
+                    rotationX: 0,
+                    rotationY: 0,
+                    rotationZ: self.transforms[settings.position+2].rotation,
+                    onStart: settings.from !== undefined ? () => TweenMax.set(self.DOM.imgWrap, {opacity: 1}) : null,
+                    onComplete: resolve
+                });
             })
         }
     }
-    // SIGNIFICADO DE Array.from
     class Slideshow{
         constructor(el){
             this.DOM = {el: el};
@@ -111,8 +141,7 @@ $(document).foundation()
             // criando um evento de clicque padronizado
             this.clickFn = (slide) => {
                 if(slide.isPositionedLeft()){
-
-                    console.log(slide, 'está na esquerda');
+                    this.navigate('prev');
                 }else
                 if(slide.isPositionedRight()){
                     this.navigate('next');
@@ -128,22 +157,59 @@ $(document).foundation()
                 slide.DOM.imgWrap.addEventListener('click', (function(){
                     this.clickFn(slide);
                 }).bind(this));
-            }            
+            } 
+            this.currentSlide.showTexts();          
         }
         showContent(){}
         hideContent(){}
         navigate(direction){
-            // controle a animação
-            if(this.isAnimating) return;
-            this.isAnimating = true;
-            const upcomingPos = direction === 'next' ?
-                this.current < this.slidesTotal-2 ? this.current+2 : Math.abs(this.slidesTotal-2-this.current):
-                this.current >= 2 ? this.current-2 : Math.abs(this.slidesTotal-2+this.current);
-            console.log(upcomingPos, 'upcomingPos');                                 
-            this.currentSlide.moveToPosition({position: direction === 'next' ? -1 : 1, delay: 0.07 });
-            // checar se for next
-            console.log(this.slidesTotal, 'slidesTotal');
-            console.log(direction, 'direction');
+             // If animating return.
+             if ( this.isAnimating ) return;
+             this.isAnimating = true;
+ 
+             const upcomingPos = direction === 'next' ? 
+                     this.current < this.slidesTotal-2 ? this.current+2 : Math.abs(this.slidesTotal-2-this.current):
+                     this.current >= 2 ? this.current-2 : Math.abs(this.slidesTotal-2+this.current);
+             console.log(upcomingPos, 'upcomingPos');
+             
+             this.upcomingSlide = this.slides[upcomingPos];
+ 
+             // Update current.
+             this.current = direction === 'next' ? 
+                     this.current < this.slidesTotal-1 ? this.current+1 : 0 :
+                     this.current > 0 ? this.current-1 : this.slidesTotal-1;
+             
+             // Move slides (the previous, current, next and upcoming slide).
+             this.prevSlide.moveToPosition({position: direction === 'next' ? -2 : 0, delay: direction === 'next' ? 0 : 0.14}).then(() => {
+                 if ( direction === 'next' ) {
+                     this.prevSlide.hide();
+                 }
+             });
+             
+             this.currentSlide.moveToPosition({position: direction === 'next' ? -1 : 1, delay: 0.07 });
+             this.currentSlide.hideTexts();
+             
+             // this.bounceDeco(direction, 0.07);
+             
+             this.nextSlide.moveToPosition({position: direction === 'next' ? 0 : 2, delay: direction === 'next' ? 0.14 : 0 }).then(() => {
+                 if ( direction === 'prev' ) {
+                     this.nextSlide.hide();
+                 }
+             });
+ 
+             if ( direction === 'next' ) {
+                 this.nextSlide.showTexts();
+             }
+             else {
+                 this.prevSlide.showTexts();
+             }
+             
+             this.upcomingSlide.moveToPosition({position: direction === 'next' ? 1 : -1, from: direction === 'next' ? 2 : -2, delay: 0.21 }).then(() => {
+                 // Reset classes.
+                 [this.nextSlide,this.currentSlide,this.prevSlide].forEach(slide => slide.reset());
+                 this.render();
+                 this.isAnimating = false;
+             });
         }
     }
 

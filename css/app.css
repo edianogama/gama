@@ -1,5 +1,9 @@
-body{
-    background: #000;
+/*
+# Cor principal 
+#*/
+
+body {
+    /* background: #000; */
 }
 h1,h2,h3,h4,h5,h6 {
     font-family: 'Nunito Sans', sans-serif;
@@ -74,17 +78,19 @@ header .logo h1{
 	cursor: pointer;
 	position: relative;
 	height: 100%;
-	grid-area: slide;
+    grid-area: slide;
 }
 .slide__img-wrap {
 	width: 100%;
 	overflow: hidden;
 	z-index: 100;
-	height: 80%;
-	top: 10%;
+	height: 70%;
+    top: 10%;
     position: absolute;
     cursor: pointer;
     pointer-events: auto;
+    border: 1px solid red;
+    z-index: 0;
 }
 .slide__img{
         width: 100%;
@@ -96,6 +102,18 @@ header .logo h1{
         position: absolute;
         pointer-events: none;
         transform: scale3d(1.01,1.01,1);
+}
+.slide__caption {
+    position: relative;
+    /* position: absolute; */
+    /* background: red; */
+    /* z-index: 1; */
+}
+.slide__caption h1 {
+    position: absolute;
+    bottom: 5rem;
+    z-index: 20;
+    color: #fff;
 }
 .icon {
 	display: block;
