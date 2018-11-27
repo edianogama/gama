@@ -17,7 +17,6 @@ $(document).foundation()
             this.hideTexts();
         }
         calcSizes(){
-            console.log(this.DOM.imgWrap);
             this.width = this.DOM.imgWrap.offsetWidth;
             this.height = this.DOM.imgWrap.offsetHeight;
         }
@@ -51,7 +50,6 @@ $(document).foundation()
             this.isRight = this.isCurrent = false;
             this.isLeft = true;
             this.DOM.el.classList.add('slide--visible');
-            console.log(this);
             this.position(1);
         }
         setRight(){
@@ -74,9 +72,18 @@ $(document).foundation()
             TweenMax.set(this.DOM.title, {opacity: 0 })
         }
         showTexts(){
-            TweenMax.fromTo(this.DOM.title, 0.6, {opacity: 0, y: 20 },{opacity: 1, y:0, ease: Power4.easeOut });
+            TweenMax.to(this.DOM.title, 0.6, { opacity: 1, y:0, ease: Power4.easeOut });
             // TweenMax.set(this.DOM.title, {opacity: 1});
         }
+        scaleDown(){
+            TweenMax.to(this.DOM.imgWrap, 0.6, { scale: .7, ease: Power4.easeOut });
+            // TweenMax.set(this.DOM.title, {opacity: 1});
+        }
+        scaleUp(){
+            TweenMax.to(this.DOM.imgWrap, 0.6, { scale: 1, ease: Power4.easeOut });
+            // TweenMax.set(this.DOM.title, {opacity: 1});
+        }
+        
           // Reset classes and state.
         reset() {
             this.isRight = this.isLeft = this.isCurrent = false;
@@ -132,6 +139,7 @@ $(document).foundation()
             this.nextSlide = this.slides[this.current+1 <= this.slidesTotal-1 ? this.current+1 : 0 ];
             this.prevSlide = this.slides[this.current-1 >= 0 ? this.current-1 : this.slidesTotal-1 ];
             this.currentSlide.setCurrent();
+            this.currentSlide.scaleUp();
             this.nextSlide.setRight();
             this.prevSlide.setLeft();
           
@@ -149,7 +157,6 @@ $(document).foundation()
                 }else{
                     console.log(slide, 'está na centro');
                 }
-
             }
             // atrelando o clique a cada elemento
             for (let slide of this.slides) {
@@ -170,7 +177,6 @@ $(document).foundation()
              const upcomingPos = direction === 'next' ? 
                      this.current < this.slidesTotal-2 ? this.current+2 : Math.abs(this.slidesTotal-2-this.current):
                      this.current >= 2 ? this.current-2 : Math.abs(this.slidesTotal-2+this.current);
-             console.log(upcomingPos, 'upcomingPos');
              
              this.upcomingSlide = this.slides[upcomingPos];
  
@@ -194,13 +200,16 @@ $(document).foundation()
              this.nextSlide.moveToPosition({position: direction === 'next' ? 0 : 2, delay: direction === 'next' ? 0.14 : 0 }).then(() => {
                  if ( direction === 'prev' ) {
                      this.nextSlide.hide();
+                     this.nextSlide.scaleDown();
                  }
              });
  
              if ( direction === 'next' ) {
+                 this.nextSlide.scaleDown();
                  this.nextSlide.showTexts();
              }
              else {
+                 this.prevSlide.scaleDown();
                  this.prevSlide.showTexts();
              }
              

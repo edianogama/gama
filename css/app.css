@@ -27,14 +27,14 @@ header .menu svg {
     width: 40px;
     fill: #fff;
  }
-/* header .logo {
+ header .logo {
     width: 150px;
     height: 100%;
     position: absolute;
     right: 0;
     background: #1a8dff;
     z-index: 1;
-} */
+} 
 header .logo h1{
     font-size: 1rem;
     color: #fff;
@@ -58,12 +58,13 @@ header .logo h1{
     z-index: 1;
 }
 .slideshow {
+    background: gray;
     position: relative;
 	overflow: hidden;
 	margin: 0;
 	height: 100vh;
 	width: 100%;
-	height: calc(100vh - 10rem);
+	height: calc(100vh);
 	display: grid;
 	grid-template-columns: 33% 33% 33%;
 	grid-column-gap: 0.5%;
@@ -76,9 +77,11 @@ header .logo h1{
 	display: flex;
 	pointer-events: none;
 	cursor: pointer;
-	position: relative;
+    position: relative;
+    margin-top: 3rem;
 	height: 100%;
     grid-area: slide;
+    /* background: blue; */
 }
 .slide__img-wrap {
 	width: 100%;
@@ -89,19 +92,31 @@ header .logo h1{
     position: absolute;
     cursor: pointer;
     pointer-events: auto;
-    border: 1px solid red;
     z-index: 0;
 }
-.slide__img{
-        width: 100%;
-        height: 100%;
-        left: 0;
-        top: 0;
-        background-size: cover;
-        background-position: 50% 50%;
-        position: absolute;
-        pointer-events: none;
-        transform: scale3d(1.01,1.01,1);
+.slide__img-wrap::before {
+    position: absolute;
+    content: '';
+    height: 100%;
+    width: 100%;
+    background: #000;
+    box-shadow: 1px 1px 1px #000;
+    z-index: -1;
+    top: 0px;
+    right: 0;
+}
+.slide__img {
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-size: cover;
+    background-position: 50% 50%;
+    position: absolute;
+    pointer-events: none;
+    transform: scale3d(1.01,1.01,1);
+    padding-bottom: 1px solid #000;
+    border-bottom: 2px solid #fff;
 }
 .slide__caption {
     position: relative;
